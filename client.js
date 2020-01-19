@@ -21,10 +21,11 @@ var ReqType = {
 
 //---------------------------------------
 function newUDSClient() {
-    client = Dial("unix://"+udspath)
+    var client = Dial("unix://"+udspath)
     if (null === client) {
         throw "new usd client fail"
     }
+    return client
 }
 
 function udsRequest(client, req) {
@@ -74,8 +75,8 @@ var MarketCenterClient = (function() {
       MarketCenterClient.prototype.GetSupportList = function() {
         return GetSupportList(this.client)
       }
-    }
-)()
+      return MarketCenterClient
+    })()
 
 $.NewMarketCenterClient = function(exchangeName, pair) {
     return new MarketCenterClient(exchangeName, pair)
