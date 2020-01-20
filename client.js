@@ -35,7 +35,6 @@ function udsRequest(client, req) {
         return null
     }
     var obj = JSON.parse(rsp)
-    Log(obj)
     if(obj.status !== 0) {
         return null
     }
@@ -51,7 +50,7 @@ function GetSupportList(client) {
 function GetDepth(client, exchangeName, pair) {
     var req = {type:ReqType.ReqType_GetDepth, exchange_name: exchangeName, currency_pair: pair}
     var rsp = udsRequest(client, req)
-    return rsp
+    return {Asks:rsp.AskList, Bids:rsp.BidList, Time:rsp.UTime, Info:rsp.rsp}
 }
 
 function GetTicker(client, exchangeName, pair) {
