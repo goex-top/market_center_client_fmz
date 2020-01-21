@@ -44,6 +44,13 @@ function udsRequest(client, req) {
 function GetSupportList(client) {
     var req = {type:ReqType.ReqType_GetSupportList}
     var rsp = udsRequest(client, req)
+    if (rsp === null) {
+        return null
+    }
+    // var str = JSON.stringify(rsp)
+    // var strs = new Array()
+    // strs = str.split(',')
+    // return strs
     return rsp
 }
 
@@ -79,49 +86,54 @@ function SubscribeTicker(client, exchangeName, pair, period) {
 }
 
 var MarketCenterClient = (function() {
-    function MarketCenterClient(exchangeName, pair) {
-        if (typeof exchangeName === 'undefined') {
-            throw 'exchangeName not defined'
-          }
-          if (typeof pair === 'undefined') {
-            throw 'pair not defined'
-          }
+    function MarketCenterClient() {
           if (typeof udspath === 'undefined' || udspath === '') {
             throw 'udspath not defined'
           }
           this.client = newUDSClient()
-          var list = GetSupportList(this.client)
-          var found = false
-          _.each(list, function(item) {
+          this.list = GetSupportList(this.client)
+          Log("this.list:" + this.list)
+        }
+      MarketCenterClient.prototype.GetTicker = function(exchangeName, pair) {
+        return GetTicker(this.client, exchangeName, pair)
+      }
+
+      MarketCenterClient.prototype.GetDepth = function(exchangeName, pair) {
+        return GetDepth(this.client, exchangeName, pair)
+      }
+      MarketCenterClient.prototype.SubscribeDepth = function(exchangeName, pair, period) {
+        if(typeof(period) === 'undefined') {
+            period = 200
+        }
+        var found = false
+        _.each(this.list, function(item) {
             if (item === exchangeName) {
                 found = true
                 return false
             }
           })
-          if(!found) {
-              throw 'exchange not support, please check it again, https://github.com/goex-top/market_center#support-exchanges'
-          }
-          this.exchangeName = exchangeName
-          this.pair = pair
-      }
-      MarketCenterClient.prototype.GetTicker = function() {
-        return GetTicker(this.client, this.exchangeName, this.pair)
-      }
 
-      MarketCenterClient.prototype.GetDepth = function() {
-        return GetDepth(this.client, this.exchangeName, this.pair)
+        if(!found) {
+            throw 'exchange ('+ exchangeName +') not support, please check it again, https://github.com/goex-top/market_center#support-exchanges'
+        }
+        return SubscribeDepth(this.client, exchangeName, pair, period)
       }
-      MarketCenterClient.prototype.SubscribeDepth = function(period) {
+      MarketCenterClient.prototype.SubscribeTicker = function(exchangeName, pair, period) {
         if(typeof(period) === 'undefined') {
             period = 200
         }
-        return SubscribeDepth(this.client, this.exchangeName, this.pair, period)
-      }
-      MarketCenterClient.prototype.SubscribeTicker = function(period) {
-        if(typeof(period) === 'undefined') {
-            period = 200
+        var found = false
+        _.each(this.list, function(item) {
+            if (item === exchangeName) {
+                found = true
+                return false
+            }
+          })
+
+        if(!found) {
+            throw 'exchange ('+ exchangeName +') not support, please check it again, https://github.com/goex-top/market_center#support-exchanges'
         }
-        return SubscribeTicker(this.client, this.exchangeName, this.pair, period)
+        return SubscribeTicker(this.client, exchangeName, pair, period)
       }
       MarketCenterClient.prototype.GetSupportList = function() {
         return GetSupportList(this.client)
