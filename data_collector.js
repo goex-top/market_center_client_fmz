@@ -1,27 +1,11 @@
-var binance_btc_usdt = null
-// var binance_eos_usdt = null
-// var binance_eth_usdt = null
+var client = null
 
-var okex_btc_usdt = null
-// var okex_eos_usdt = null
-// var okex_eth_usdt = null
-
-var huobi_btc_usdt = null
-// var huobi_eos_usdt = null
-// var huobi_eth_usdt = null
-
-var fcoin_btc_usdt = null
-// var fcoin_eos_usdt = null
-// var fcoin_eth_usdt = null
-
-var clients = []
+var config = []
 var latestPrice = []
 
 var ObjChart = null
 var startTime = null
 var strategyVersion = "1.0.0";
-
-// var compareSize = 4
 
 var chartBTC_USDT = {
     __isStock: true,
@@ -86,9 +70,10 @@ var chartBTC_USDT = {
                 format: '{value}',
             },
             opposite: true
-        }],
+        }
+    ],
     series : [                                          // 数据系列，该属性保存的是 各个 数据系列（线， K线图， 标签等..）
-        {name : "binance",      id : "binance, BTC_USDT",      data : [], yAxis: 0,showInLegend: true, type:'area', tooltip:{valueDecimals: 2, valueSuffix: ' USDT'}}, // 索引为1，设置了dashStyle : 'shortdash' 即：设置 虚线。
+        {name : "binance",      id : "binance, BTC_USDT",      data : [], yAxis: 0,type:'area', showInLegend: true, tooltip:{valueDecimals: 2, valueSuffix: ' USDT'}}, // 索引为1，设置了dashStyle : 'shortdash' 即：设置 虚线。
         {name : "okex", id : "okex, BTC_USDT",   data : [], yAxis: 0,showInLegend: true, tooltip:{valueDecimals: 2, valueSuffix: ' USDT'}},  // 索引为0， data 数组内存放的是该索引系列的 数据
         {name : "huobi",    id : "huobi, BTC_USDT",  data : [], yAxis: 0,showInLegend: true, tooltip:{valueDecimals: 2, valueSuffix: ' USDT'}}, // 索引为1，设置了dashStyle : 'shortdash' 即：设置 虚线。
         {name : "fcoin",    id : "fcoin, BTC_USDT",  data : [], yAxis: 0,showInLegend: true, tooltip:{valueDecimals: 2, valueSuffix: ' USDT'}}, // 索引为1，设置了dashStyle : 'shortdash' 即：设置 虚线。
@@ -155,59 +140,35 @@ function welcome() {
     Log("                      ♜Q:6510676#0000FF              ")
     Log("                      ♜Q群:364655408#0000FF          ")
     Log("                      欢迎来交流                       ")
+    Log("                      策略版本:"+strategyVersion)
+    Log("                      启动时间:"+startTime)
     Log("======================================================")
 }
 
 function init() {
-    binance_btc_usdt = $.NewMarketCenterClient('binance.com', 'BTC_USDT')
-    binance_btc_usdt.SubscribeTicker(200)
-    clients.push(binance_btc_usdt)
-
-    // binance_eos_usdt = $.NewMarketCenterClient('binance.com', 'EOS_USDT')
-    // binance_eos_usdt.SubscribeTicker(200)
-    //  clients.push(binance_eos_usdt)
-
-    // binance_eth_usdt = $.NewMarketCenterClient('binance.com', 'ETH_USDT')
-    // binance_eth_usdt.SubscribeTicker(200)
-    //  clients.push(binance_eth_usdt)
-
-    // okex_btc_usdt = $.NewMarketCenterClient('okex.com_v3', 'BTC_USDT')
-    // okex_btc_usdt.SubscribeTicker(200)
-    // clients.push(okex_btc_usdt)
-
-    // okex_eos_usdt = $.NewMarketCenterClient('okex.com_v3', 'EOS_USDT')
-    // okex_eos_usdt.SubscribeTicker(200)
-    //  clients.push(okex_eos_usdt)
-
-    // okex_eth_usdt = $.NewMarketCenterClient('okex.com_v3', 'ETH_USDT')
-    // okex_eth_usdt.SubscribeTicker(200)
-    //  clients.push(okex_eth_usdt)
-
-    // huobi_btc_usdt = $.NewMarketCenterClient('huobi.pro', 'BTC_USDT')
-    // huobi_btc_usdt.SubscribeTicker(200)
-    // clients.push(huobi_btc_usdt)
-
-    // huobi_eos_usdt = $.NewMarketCenterClient('huobi.pro', 'EOS_USDT')
-    // huobi_eos_usdt.SubscribeTicker(200)
-    //  clients.push(huobi_eos_usdt)
-
-    // huobi_eth_usdt = $.NewMarketCenterClient('huobi.pro', 'ETH_USDT')
-    // huobi_eth_usdt.SubscribeTicker(200)
-    //  clients.push(huobi_eth_usdt)
-
-    // fcoin_btc_usdt = $.NewMarketCenterClient('fcoin.com', 'BTC_USDT')
-    // fcoin_btc_usdt.SubscribeTicker(200)
-    // clients.push(fcoin_btc_usdt)
-
-    _.each(clients, function(c) {
-        latestPrice.push(0)
-    })
-    Log("supports size:" + clients.length)
     if(log_reset) {
         LogReset()
         LogVacuum()
     }
 
+  client = $.NewMarketCenterClient()
+    client.SubscribeTicker('binance.com', 'BTC_USDT', 200)
+    config.push({exchange:'binance.com', pair:'BTC_USDT'})
+
+    client.SubscribeTicker('okex.com_v3', 'BTC_USDT', 200)
+    config.push({exchange:'okex.com_v3', pair:'BTC_USDT'})
+
+    client.SubscribeTicker('huobi.pro', 'BTC_USDT', 200)
+    config.push({exchange:'huobi.pro', pair:'BTC_USDT'})
+
+    client.SubscribeTicker('fcoin.com', 'BTC_USDT', 200)
+    config.push({exchange:'fcoin.com', pair:'BTC_USDT'})
+
+    _.each(config, function(c) {
+        latestPrice.push(0)
+    })
+    Log("latestPrice:" + latestPrice)
+    Log("config:" + config)
      ObjChart = Chart([chartBTC_USDT, chartDiff1, chartDiff2, chartDiff3, chartDiff4]);
      if(chart_reset){
          ObjChart.reset();             // 清空
@@ -219,17 +180,17 @@ function init() {
 
 function updateTicker() {
     var tickers = []
-    for(var index = 0; index <  clients.length; index++) {
-        var ticker = clients[index].GetTicker()
-        Sleep(1)
+    var nowTime = new Date().getTime();
+    for(var index = 0; index <  config.length; index++) {
+        var ticker = client.GetTicker(config[index].exchange, config[index].pair)
         if(ticker !== null) {
             tickers.push(ticker)
-        }
+        } 
+        Sleep(1)
     }
-    if (tickers.length == clients.length) {
+    if (tickers.length == config.length) {
         for(var index = 0; index <  tickers.length; index++) {
             var ticker = tickers[index]
-            var nowTime = new Date().getTime();
             var price = (ticker.Buy + ticker.Sell) / 2
             ObjChart.add([index, [nowTime, price]]);
             if(latestPrice[index] != 0) {
@@ -238,7 +199,7 @@ function updateTicker() {
                     chartDiff[index].series[1].data.shift()
                 }
                 chartDiff[index].series[1].data.push(diff)
-                ObjChart.add([clients.length + index, [nowTime, diff]]);
+                ObjChart.add([config.length + index, [nowTime, diff]]);
             }
             latestPrice[index] = price
         }

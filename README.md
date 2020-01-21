@@ -1,10 +1,12 @@
 # A client for market center in FMZ
-get market data from market center in [FMZ](https://fmz.com)
+Get market data from market center in [FMZ](https://fmz.com)
 
+## Description
+Ref to [FMZ](https://www.fmz.com/strategy/182185)
 ## API
 * SubscribeTicker
 * SubscribeDepth
-* SubscribeTrade
+* ~~SubscribeTrade~~
 * GetTicker
 * GetDepth
-* GetTrade
+* ~~GetTrade~~

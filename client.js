@@ -34,6 +34,7 @@ function udsRequest(client, req) {
     if (rsp === null) {
         return null
     }
+
     var obj = JSON.parse(rsp)
     if(obj.status !== 0) {
         return null
@@ -47,10 +48,6 @@ function GetSupportList(client) {
     if (rsp === null) {
         return null
     }
-    // var str = JSON.stringify(rsp)
-    // var strs = new Array()
-    // strs = str.split(',')
-    // return strs
     return rsp
 }
 
@@ -69,7 +66,16 @@ function GetTicker(client, exchangeName, pair) {
     if(rsp === null) {
         return null
     }
-    return {Last:rsp.last, Buy:rsp.buy, Sell:rsp.sell, Volume:rsp.vol, Time:rsp.date, High:rsp.high, Low:rsp.low, Info:rsp}
+    return {
+        Last:parseFloat(rsp.last), 
+        Buy:parseFloat(rsp.buy), 
+        Sell:parseFloat(rsp.sell), 
+        Volume:parseFloat(rsp.vol), 
+        Time:parseFloat(rsp.date), 
+        High:parseFloat(rsp.high), 
+        Low:parseFloat(rsp.low), 
+        Info:rsp
+    }
 }
 
 
