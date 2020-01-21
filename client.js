@@ -50,12 +50,18 @@ function GetSupportList(client) {
 function GetDepth(client, exchangeName, pair) {
     var req = {type:ReqType.ReqType_GetDepth, exchange_name: exchangeName, currency_pair: pair}
     var rsp = udsRequest(client, req)
+    if(rsp === null) {
+        return null
+    }
     return {Asks:rsp.AskList, Bids:rsp.BidList, Time:rsp.UTime, Info:rsp.rsp}
 }
 
 function GetTicker(client, exchangeName, pair) {
     var req = {type:ReqType.ReqType_GetTicker, exchange_name: exchangeName, currency_pair: pair}
     var rsp = udsRequest(client, req)
+    if(rsp === null) {
+        return null
+    }
     return {Last:rsp.last, Buy:rsp.buy, Sell:rsp.sell, Volume:rsp.vol, Time:rsp.date, High:rsp.high, Low:rsp.low, Info:rsp}
 }
 
