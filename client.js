@@ -1,9 +1,18 @@
 // a client for market center, https://github.com/goex-top/market_center
 // api list 
-// - GetTicker
-// - GetDepth
-// - SubscribeDepth
-// - SubscribeTicker
+// * GetSupportList
+// * SubscribeSpotTicker
+// * SubscribeSpotDepth
+// * ~~SubscribeSpotTrade~~
+// * GetSpotTicker
+// * GetSpotDepth
+// * ~~GetSpotTrade~~
+// * SubscribeFutureTicker
+// * SubscribeFutureDepth
+// * ~~SubscribeFutureTrade~~
+// * GetFutureTicker
+// * GetFutureDepth
+// * ~~GetFutureTrade~~
 
 // params wit web
 // var udspath = /tmp/goex.market.center //ref to https://github.com/goex-top/market_center/blob/1e1bb15c69a1da6fddbba3d506920e91f9ec7842/const.go#L35
@@ -211,7 +220,7 @@ var MarketCenterClient = (function() {
         if(!found) {
             throw 'exchange ('+ exchangeName +') not support, please check it again, https://github.com/goex-top/market_center#support-exchanges'
         }
-        return SubscribeFutureDepth(this.client, exchangeName, pair, period)
+        return SubscribeFutureDepth(this.client, exchangeName, contractType, pair, period)
     }
 
     MarketCenterClient.prototype.SubscribeFutureTicker = function(exchangeName, contractType, pair, period) {
@@ -229,7 +238,7 @@ var MarketCenterClient = (function() {
         if(!found) {
             throw 'exchange ('+ exchangeName +') not support, please check it again, https://github.com/goex-top/market_center#support-exchanges'
         }
-        return SubscribeFutureTicker(this.client, exchangeName, pair, period)
+        return SubscribeFutureTicker(this.client, exchangeName, contractType, pair, period)
     }
 
     MarketCenterClient.prototype.GetSupportList = function() {
