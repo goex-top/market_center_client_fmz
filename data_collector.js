@@ -129,9 +129,135 @@ var chartDiff1 = {
     }]
 };
 
-var chartDiff2 = chartDiff1
-var chartDiff3 = chartDiff1
-var chartDiff4 = chartDiff1
+var chartDiff2 = {
+    __isStock: false,
+    extension: {
+        layout: 'single',
+        col: 6, // 指定宽度占的单元值, 总值 为12
+        height: 500,
+    },
+    title: {
+        text: '价差分布图'
+    },
+    xAxis: [{
+        title: { text: 'Data' },
+        alignTicks: false
+    }, {
+        title: { text: 'Histogram' },
+        alignTicks: false,
+        opposite: true
+    }],
+
+    yAxis: [{
+        title: { text: 'Data' }
+    }, {
+        title: { text: 'Histogram' },
+        opposite: true
+    }],
+
+    series: [{
+        name: 'Histogram',
+        type: 'histogram',
+        xAxis: 1,
+        yAxis: 1,
+        baseSeries: 's1h',
+        zIndex: -1
+    },{
+        name: 'Data',
+        type: 'scatter',
+        data: [],
+        id: 's1h',
+        marker: {
+            radius: 1.5
+        }
+    }]
+};
+var chartDiff3 = {
+    __isStock: false,
+    extension: {
+        layout: 'single',
+        col: 6, // 指定宽度占的单元值, 总值 为12
+        height: 500,
+    },
+    title: {
+        text: '价差分布图'
+    },
+    xAxis: [{
+        title: { text: 'Data' },
+        alignTicks: false
+    }, {
+        title: { text: 'Histogram' },
+        alignTicks: false,
+        opposite: true
+    }],
+
+    yAxis: [{
+        title: { text: 'Data' }
+    }, {
+        title: { text: 'Histogram' },
+        opposite: true
+    }],
+
+    series: [{
+        name: 'Histogram',
+        type: 'histogram',
+        xAxis: 1,
+        yAxis: 1,
+        baseSeries: 's1h',
+        zIndex: -1
+    },{
+        name: 'Data',
+        type: 'scatter',
+        data: [],
+        id: 's1h',
+        marker: {
+            radius: 1.5
+        }
+    }]
+};
+var chartDiff4 = {
+    __isStock: false,
+    extension: {
+        layout: 'single',
+        col: 6, // 指定宽度占的单元值, 总值 为12
+        height: 500,
+    },
+    title: {
+        text: '价差分布图'
+    },
+    xAxis: [{
+        title: { text: 'Data' },
+        alignTicks: false
+    }, {
+        title: { text: 'Histogram' },
+        alignTicks: false,
+        opposite: true
+    }],
+
+    yAxis: [{
+        title: { text: 'Data' }
+    }, {
+        title: { text: 'Histogram' },
+        opposite: true
+    }],
+
+    series: [{
+        name: 'Histogram',
+        type: 'histogram',
+        xAxis: 1,
+        yAxis: 1,
+        baseSeries: 's1h',
+        zIndex: -1
+    },{
+        name: 'Data',
+        type: 'scatter',
+        data: [],
+        id: 's1h',
+        marker: {
+            radius: 1.5
+        }
+    }]
+};
 var chartDiff = [chartDiff1, chartDiff2, chartDiff3, chartDiff4]
 var maxDiffSize = 3600*2*5
 ////////////////////////////////////////////////////////////////////
@@ -139,6 +265,7 @@ function welcome() {
     Log("======================================================")
     Log("                      ♜Q:6510676#0000FF              ")
     Log("                      ♜Q群:364655408#0000FF          ")
+    Log("                      ♜微信: btstarinfo#0000FF        ")
     Log("                      欢迎来交流                       ")
     Log("                      策略版本:"+strategyVersion)
     Log("                      启动时间:"+startTime)
@@ -152,16 +279,16 @@ function init() {
     }
 
   client = $.NewMarketCenterClient()
-    client.SubscribeTicker('binance.com', 'BTC_USDT', 200)
+    client.SubscribeSpotTicker('binance.com', 'BTC_USDT', 200)
     config.push({exchange:'binance.com', pair:'BTC_USDT'})
 
-    client.SubscribeTicker('okex.com_v3', 'BTC_USDT', 200)
+    client.SubscribeSpotTicker('okex.com_v3', 'BTC_USDT', 200)
     config.push({exchange:'okex.com_v3', pair:'BTC_USDT'})
 
-    client.SubscribeTicker('huobi.pro', 'BTC_USDT', 200)
+    client.SubscribeSpotTicker('huobi.pro', 'BTC_USDT', 200)
     config.push({exchange:'huobi.pro', pair:'BTC_USDT'})
 
-    client.SubscribeTicker('fcoin.com', 'BTC_USDT', 200)
+    client.SubscribeSpotTicker('fcoin.com', 'BTC_USDT', 200)
     config.push({exchange:'fcoin.com', pair:'BTC_USDT'})
 
     _.each(config, function(c) {
@@ -182,7 +309,7 @@ function updateTicker() {
     var tickers = []
     var nowTime = new Date().getTime();
     for(var index = 0; index <  config.length; index++) {
-        var ticker = client.GetTicker(config[index].exchange, config[index].pair)
+        var ticker = client.GetSpotTicker(config[index].exchange, config[index].pair)
         if(ticker !== null) {
             tickers.push(ticker)
         } 
@@ -195,11 +322,13 @@ function updateTicker() {
             ObjChart.add([index, [nowTime, price]]);
             if(latestPrice[index] != 0) {
                 var diff = price - latestPrice[index]
-                if(chartDiff[index].series[1].data.length > maxDiffSize) {
-                    chartDiff[index].series[1].data.shift()
+                if (diff != 0) {
+                    if(chartDiff[index].series[1].data.length > maxDiffSize) {
+                        chartDiff[index].series[1].data.shift()
+                    }
+                    chartDiff[index].series[1].data.push(diff)
+                    ObjChart.add([config.length + index, [nowTime, diff]]);
                 }
-                chartDiff[index].series[1].data.push(diff)
-                ObjChart.add([config.length + index, [nowTime, diff]]);
             }
             latestPrice[index] = price
         }
@@ -207,6 +336,13 @@ function updateTicker() {
 }
 
 function main() {
+    var allstatus = '使用行情中心收集数据\n'
+    allstatus += "https://www.fmz.com/strategy/182185\n";
+    allstatus += "♜Q:6510676#0000ff\n";
+    allstatus += "♜Q群:364655408#0000ff\n";
+    allstatus += "♜微信: btstarinfo#0000ff\n";
+
+    LogStatus(allstatus)
     while(true) {
         var now = new Date().getTime()
         updateTicker()
