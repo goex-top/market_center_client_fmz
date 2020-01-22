@@ -43,7 +43,7 @@ function newUDSClient() {
 
 function udsRequest(client, req) {
     client.write(JSON.stringify(req))
-    var rsp = client.read(2000)
+    var rsp = client.read(20)
     if (rsp === null) {
         return null
     }
