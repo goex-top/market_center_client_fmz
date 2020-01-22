@@ -1,5 +1,5 @@
 # A client for market center in FMZ
-[![HitCount](http://hits.dwyl.io/goex-top/market_center_client_fmz.svg)](http://hits.dwyl.io/goex-top/market_center_client_fmz)
+![HitCount](http://hits.dwyl.io/goex-top/market_center_client_fmz.svg)
 
 Get market data from market center in [FMZ](https://fmz.com)
 
@@ -46,4 +46,4 @@ Ref to [FMZ](https://www.fmz.com/strategy/182185)
 
 ### 观星者
 
-[![观星者](https://starchart.cc/goex-top/market_center_client_fmz.svg)](https://starchart.cc/goex-top/market_center_client_fmz)
+![观星者](https://starchart.cc/goex-top/market_center_client_fmz.svg)
