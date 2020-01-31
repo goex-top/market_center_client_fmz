@@ -153,16 +153,34 @@ var MarketCenterClient = (function() {
     }
 
     MarketCenterClient.prototype.GetSpotTicker = function(exchangeName, pair) {
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'GetSpotTicker exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'GetSpotTicker pair not defined'
+        }
         return GetSpotTicker(this.client, exchangeName, pair)
     }
 
     MarketCenterClient.prototype.GetSpotDepth = function(exchangeName, pair) {
-        return GetSpotDepth(this.client, exchangeName, pair)
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'GetSpotDepth exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'GetSpotDepth pair not defined'
+        }
+    return GetSpotDepth(this.client, exchangeName, pair)
     }
 
     MarketCenterClient.prototype.SubscribeSpotDepth = function(exchangeName, pair, period) {
         if(typeof(period) === 'undefined') {
             period = 200
+        }
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'SubscribeSpotDepth exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'SubscribeSpotDepth pair not defined'
         }
         var found = false
         _.each(this.list, function(item) {
@@ -182,7 +200,13 @@ var MarketCenterClient = (function() {
         if(typeof(period) === 'undefined') {
             period = 200
         }
-        var found = false
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'SubscribeSpotTicker exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'SubscribeSpotTicker pair not defined'
+        }
+      var found = false
         _.each(this.list, function(item) {
             if (item === exchangeName) {
                 found = true
@@ -198,18 +222,36 @@ var MarketCenterClient = (function() {
 
 
     MarketCenterClient.prototype.GetFutureTicker = function(exchangeName, contractType, pair) {
-        return GetFutureTicker(this.client, exchangeName, contractType, pair)
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'GetFutureTicker exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'GetFutureTicker pair not defined'
+        }
+     return GetFutureTicker(this.client, exchangeName, contractType, pair)
     }
 
     MarketCenterClient.prototype.GetFutureDepth = function(exchangeName, contractType, pair) {
-        return GetFutureDepth(this.client, exchangeName, contractType, pair)
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'GetFutureDepth exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'GetFutureDepth pair not defined'
+        }
+     return GetFutureDepth(this.client, exchangeName, contractType, pair)
     }
 
     MarketCenterClient.prototype.SubscribeFutureDepth = function(exchangeName, contractType, pair, period) {
         if(typeof(period) === 'undefined') {
             period = 200
         }
-        var found = false
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'SubscribeFutureDepth exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'SubscribeFutureDepth pair not defined'
+        }
+     var found = false
         _.each(this.list, function(item) {
             if (item === exchangeName) {
                 found = true
@@ -227,7 +269,13 @@ var MarketCenterClient = (function() {
         if(typeof(period) === 'undefined') {
             period = 200
         }
-        var found = false
+        if (typeof exchangeName === 'undefined' || exchangeName === '') {
+            throw 'SubscribeFutureTicker exchangeName not defined'
+        }
+        if (typeof pair === 'undefined' || pair === '') {
+            throw 'SubscribeFutureTicker pair not defined'
+        }
+     var found = false
         _.each(this.list, function(item) {
             if (item === exchangeName) {
                 found = true
@@ -247,18 +295,18 @@ var MarketCenterClient = (function() {
     return MarketCenterClient
 })()
 
-$.NewMarketCenterClient = function(exchangeName, pair) {
-    return new MarketCenterClient(exchangeName, pair)
+$.NewMarketCenterClient = function() {
+    return new MarketCenterClient()
 }
 
 function main() {
-    mcc = $.NewMarketCenterClient('binance.com', 'BTC_USDT')
+    mcc = $.NewMarketCenterClient()
     Log('support list'+mcc.GetSupportList())
-    mcc.SubscribeSpotDepth(200)
+    mcc.SubscribeSpotDepth('binance.com', 'BTC_USDT', 200)
     Sleep(1000)
-    Log(mcc.GetSpotDepth())
-    mcc.SubscribeSpotTicker(200)
+    Log(mcc.GetSpotDepth('binance.com', 'BTC_USDT'))
+    mcc.SubscribeSpotTicker('binance.com', 'BTC_USDT', 200)
     Sleep(1000)
-    Log(mcc.GetSpotTicker())
+    Log(mcc.GetSpotTicker('binance.com', 'BTC_USDT'))
 }
   
